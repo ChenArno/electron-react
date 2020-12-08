@@ -1,0 +1,6 @@
+# node:
+node_modules
+.vscode
+dist
+*.log
+build
