@@ -9,6 +9,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const { outDirSrc } = require('./utils')
+const theme = require('./theme')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -29,8 +30,6 @@ module.exports = {
     // 设置别名
     alias: {
       '@': resolve('src'), // 这样配置后 @ 可以指向 src 目录
-      pages: resolve('src/pages'),
-      assets: resolve('src/assets'),
       'react-dom': '@hot-loader/react-dom'
     },
     // 省略后缀名
@@ -42,7 +41,7 @@ module.exports = {
     hints: 'warning', // 枚举
     maxAssetSize: 30000000, // 整数类型（以字节为单位）
     maxEntrypointSize: 50000000, // 整数类型（以字节为单位）
-    assetFilter: function(assetFilename) {
+    assetFilter: function (assetFilename) {
       // 提供资源文件名的断言函数
       return assetFilename.endsWith('.css') || assetFilename.endsWith('.js')
     }
@@ -86,6 +85,63 @@ module.exports = {
             outputPath: 'font/'
           }
         }
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              }
+            }
+          },
+          'postcss-loader'
+        ]
+      },
+      {
+        test: /\.css$/,
+        include: /node_modules/,
+        use: ['style-loader', 'css-loader', 'postcss-loader']
+      },
+      {
+        test: /\.less$/,
+        // 表示哪些目录中的 .js 文件不要进行 babel-loader
+        exclude: /\.module\.less$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              sourceMap: true,
+              modifyVars: theme,
+              javascriptEnabled: true,
+            },
+          }
+        ]
+      },
+      {
+        test: /\.module\.less$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]'
+              }
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(sass|scss)$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
       }
     ]
   }

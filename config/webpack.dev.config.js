@@ -10,7 +10,6 @@ const merge = require('webpack-merge')
 const common = require('./webpack.common.config')
 const path = require('path')
 const { outDirSrc } = require('./utils')
-const theme = require('./theme')
 
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -25,7 +24,7 @@ const webpackDevConfig = merge(common, {
   },
   devServer: {
     contentBase: outDirSrc,
-    open: true,
+    open: false,
     port: PORT,
     compress: true,
     host: 'localhost',
@@ -53,78 +52,7 @@ const webpackDevConfig = merge(common, {
     //   // onErrors:,
     //   clearConsole: true
     // })
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        exclude: /node_modules/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
-              }
-            }
-          },
-          'postcss-loader'
-        ]
-      },
-      {
-        test: /\.css$/,
-        include: /node_modules/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
-      },
-      {
-        test: /\.less$/,
-        // 表示哪些目录中的 .js 文件不要进行 babel-loader
-        exclude: /node_modules/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]'
-              }
-            }
-          },
-          'postcss-loader',
-          {
-            loader: 'less-loader', // compiles Less to CSS
-            options: {
-              sourceMap: true,
-              modifyVars: theme,
-              javascriptEnabled: true,
-            },
-          }
-        ]
-      },
-      {
-        test: /\.less$/,
-        include: /node_modules/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'postcss-loader',
-          {
-            loader: 'less-loader',
-            options: {
-              sourceMap: true,
-              modifyVars: theme,
-              javascriptEnabled: true,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(sass|scss)$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
-      }
-    ]
-  }
+  ]
 })
 
 module.exports = new Promise((resolve, reject) => {

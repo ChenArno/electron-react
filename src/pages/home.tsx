@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react'
-import Child from './child'
+import React, { useEffect } from 'react'
+import { Layout } from 'antd';
 import { Button } from 'antd';
-import styles from './index.less'
+import styles from './index.module.less'
 
 // const iconv = window.require('iconv-lite');
 import { buffer_to_hex } from '@/utils/base'
@@ -9,12 +9,14 @@ import { buffer_to_hex } from '@/utils/base'
 const net = window.require("net");
 
 let server: any = null
+let socket: any = null
 interface HomeProps { }
 const Home: React.FC<HomeProps> = (props) => {
-  const childRef: any = useRef()
+  // const childRef: any = useRef()
 
   useEffect(() => {
-    server = net.createServer((socket: any) => {
+    server = net.createServer((soc: any) => {
+      socket = soc
       // 创建socket服务端
       console.log('connect: ' +
         socket.remoteAddress + ':' + socket.remotePort);
@@ -54,18 +56,13 @@ const Home: React.FC<HomeProps> = (props) => {
     }
   }, [])
   return (
-    <div className={styles['wrt-index']}>
-      weclome Home
-      <Button type="primary">Primary Button</Button>
-      <Child ref={childRef} />
-      <span
-        onClick={() => {
-          childRef.current._onclick(1)
-        }}
-      >
-        click
-      </span>
-    </div>
+    <Layout className={styles.lay}>
+      <Layout.Header>header</Layout.Header>
+      <Layout>
+        <Layout.Content><Button type="primary">ssss</Button></Layout.Content>
+        <Layout.Sider>left sidebar</Layout.Sider>
+      </Layout>
+    </Layout>
   )
 }
 
