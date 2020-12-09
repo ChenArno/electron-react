@@ -1,14 +1,51 @@
 {
   "name": "ipconfig",
   "version": "1.0.0",
-  "description": "",
+  "description": "打包",
   "main": "index.js",
+  "homepage": ".",
+  "build": {
+    "productName": "afd-tool",
+    "appId": "org.afd-tool.electron",
+    "copyright": "Copyright © afd",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "electronDownload": {
+      "mirror": "https://npm.taobao.org/mirrors/electron/"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": ""
+      }
+    ],
+    "win": {
+      "artifactName": "${productName}_setup_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "guid": "afd-tool",
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./app/icons/favicon.ico",
+      "uninstallerIcon": "./app/icons/favicon.ico",
+      "installerHeaderIcon": "./app/icons/favicon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "工具"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cross-env NODE_ENV=prod webpack --progress --config ./config/webpack.prod.config.js",
+    "build": "cross-env NODE_ENV=prod webpack --progress --config ./config/webpack.prod.config.js && electron-builder install-app-deps",
     "serve": "cross-env NODE_ENV=dev webpack-dev-server --progress --inline --config ./config/webpack.dev.config.js",
     "start": "electron main/index.js --development",
     "analyz": "npm_config_report=true npm run build",
+    "postinstall": "electron-builder install-app-deps",
+    "distWin": "electron-builder --win --x64",
     "pack": "electron-packager ./build serport --platform=win32 --arch=x64 --out=./dist --app-version=1.0.1 --electron-version=9.0.0"
   },
   "keywords": [],
@@ -29,6 +66,8 @@
     "copy-webpack-plugin": "^5.1.1",
     "cross-env": "^6.0.3",
     "css-loader": "^3.3.2",
+    "electron": "9.0.0",
+    "electron-builder": "^22.9.1",
     "eslint": "^6.7.2",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-import-resolver-webpack": "^0.12.1",

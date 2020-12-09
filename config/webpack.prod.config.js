@@ -48,6 +48,11 @@ const webpackProdConfig = merge(common, {
         from: path.resolve(__dirname, '../public'),
         to: outDirSrc,
         ignore: ['.*']
+      },
+      {
+        from: path.resolve(__dirname, '../main'),
+        to: outDirSrc,
+        ignore: ['.*']
       }
     ]),
     new CleanWebpackPlugin(),
@@ -92,7 +97,7 @@ const webpackProdConfig = merge(common, {
         }
       })
     ],
-     // 公有模块
+    // 公有模块
     splitChunks: {
       chunks: 'all',
       minSize: 30000,
