@@ -10,6 +10,7 @@ const { outDirSrc } = require('./utils')
 const path = require('path')
 const merge = require('webpack-merge')
 const common = require('./webpack.common.config')
+const theme = require('./theme')
 // 打包编译前清理dist目录
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -126,7 +127,24 @@ const webpackProdConfig = merge(common, {
       },
       {
         test: /\.less$/,
-        // 表示哪些目录中的 .js 文件不要进行 babel-loader
+        include: /node_modules/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'less-loader',
+            // 自定义主题
+            options: {
+              sourceMap: true,
+              modifyVars: theme,
+              javascriptEnabled: true
+            }
+          }
+        ]
+      },
+      {
+        test: /\.less$/,
         exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
@@ -139,18 +157,15 @@ const webpackProdConfig = merge(common, {
             }
           },
           'postcss-loader',
-          'less-loader'
-        ]
-      },
-      {
-        test: /\.less$/,
-        // 表示哪些目录中的 .js 文件不要进行 babel-loader
-        include: /node_modules/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          'less-loader'
+          {
+            loader: 'less-loader',
+            // 自定义主题
+            options: {
+              sourceMap: true,
+              modifyVars: theme,
+              javascriptEnabled: true
+            }
+          }
         ]
       },
       {

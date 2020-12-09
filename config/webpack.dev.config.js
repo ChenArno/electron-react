@@ -10,6 +10,7 @@ const merge = require('webpack-merge')
 const common = require('./webpack.common.config')
 const path = require('path')
 const { outDirSrc } = require('./utils')
+const theme = require('./theme')
 
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -91,14 +92,32 @@ const webpackDevConfig = merge(common, {
             }
           },
           'postcss-loader',
-          'less-loader'
+          {
+            loader: 'less-loader', // compiles Less to CSS
+            options: {
+              sourceMap: true,
+              modifyVars: theme,
+              javascriptEnabled: true,
+            },
+          }
         ]
       },
       {
         test: /\.less$/,
-        // 表示哪些目录中的 .js 文件不要进行 babel-loader
         include: /node_modules/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader']
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              sourceMap: true,
+              modifyVars: theme,
+              javascriptEnabled: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(sass|scss)$/,
