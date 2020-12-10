@@ -11,8 +11,10 @@ import * as ReactDOM from 'react-dom'
 import Home from '@/pages/home'
 import { AppContainer } from 'react-hot-loader'
 import '@/assets/css/index.less'
+import dayjs from 'dayjs'
 // import background from '@/assets/images/background.jpg'
-
+import 'dayjs/locale/zh-cn'
+dayjs.locale('zh-cn')
 // console.log(process.env)
 
 const render = (Component: any) => {

@@ -10,6 +10,7 @@ const path = require('path')
 const webpack = require('webpack')
 const { outDirSrc } = require('./utils')
 const theme = require('./theme')
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -50,7 +51,8 @@ module.exports = {
     // 环境变量配置
     new webpack.DefinePlugin({
       'process.env': require(`./${process.env.NODE_ENV}.env`)
-    })
+    }),
+    new AntdDayjsWebpackPlugin()
   ],
   module: {
     rules: [
