@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Layout, message } from 'antd';
 import styles from './index.module.less'
 import dayjs from 'dayjs'
@@ -7,20 +7,25 @@ import { buffer_to_hex } from '@/utils/base'
 import CodeMirror from '@uiw/react-codemirror';
 import 'codemirror/keymap/sublime';
 import MainView from './mainView'
+import { handMessage } from '@/commons/handData'
 
 const net = window.require("net");
 
 const sideWidth = 400
 let server: any = null
 let socket: any = null
+
 interface HomeProps { }
 const Home: React.FC<HomeProps> = (props) => {
+  const { REACT_APP_VERSION } = process.env
   // const childRef: any = useRef()
   const [textArea, setTextArea] = useState<string>('')
   const [status, setStatus] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const child: any = useRef()
 
   useEffect(() => {
-
+    console.log(process.env)
     return () => {
 
     }
@@ -32,13 +37,14 @@ const Home: React.FC<HomeProps> = (props) => {
       socket.destroy()
       return
     }
+    setLoading(true)
     server = net.createServer((soc: any) => {
       socket = soc
       // 创建socket服务端
       console.log('connect: ' +
         socket.remoteAddress + ':' + socket.remotePort);
       setStatus(true)
-      // socket.setEncoding('utf8');
+      setLoading(false)
       //接收到数据
       socket.on('data', (buf: any) => {
         let res = buffer_to_hex(buf) + ""
@@ -47,17 +53,21 @@ const Home: React.FC<HomeProps> = (props) => {
           o = `[${dayjs().format('HH:mm:ss')}] ${res}\n` + o
           return o
         })
+        // console.log(child.current.getData())
+        handMessage(buffer_to_hex(buf))
       });
       // socket.write('Hello client!\r\n');
       // socket.pipe(socket);
       //数据错误事件
       socket.on('error', (exception: any) => {
+        setLoading(false)
         console.log('socket error:' + exception);
         socket.end();
         setStatus(false)
       });
       //客户端关闭事件
       socket.on('close', (data: any) => {
+        setLoading(false)
         console.log('client closed!');
         setStatus(false)
         server.close()
@@ -71,16 +81,20 @@ const Home: React.FC<HomeProps> = (props) => {
     });
     //服务器错误事件
     server.on("error", (exception: any) => {
+      setLoading(false)
       console.log("server error:" + exception);
     });
   }
 
   return (
     <Layout className={styles.lay}>
-      <Layout.Header>智能灯调式工具</Layout.Header>
+      <Layout.Header className={styles.head}>
+        <div>智能灯调式工具</div>
+        <div>{REACT_APP_VERSION}</div>
+      </Layout.Header>
       <Layout>
         <Layout.Content>
-          <MainView onClick={onClick} status={status} clear={() => setTextArea('')} />
+          <MainView ref={child} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
         </Layout.Content>
         <Layout.Sider width={sideWidth} className={styles.side}>
           <CodeMirror

@@ -7,7 +7,8 @@
  * @LastEditTime: 2019-12-15 10:48:03
  */
 
-module.exports = {
-  NODE_ENV: '"development"',
+// const { version, description } = require('../package.json')
 
+module.exports = {
+  NODE_ENV: '"development"'
 }

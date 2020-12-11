@@ -12,16 +12,19 @@ import Home from '@/pages/home'
 import { AppContainer } from 'react-hot-loader'
 import '@/assets/css/index.less'
 import dayjs from 'dayjs'
-// import background from '@/assets/images/background.jpg'
+import store from './store'
+import { Provider } from 'react-redux'
 import 'dayjs/locale/zh-cn'
 dayjs.locale('zh-cn')
-// console.log(process.env)
+console.log(process.env)
 
 const render = (Component: any) => {
   ReactDOM.render(
-    <AppContainer>
-      <Component />
-    </AppContainer>,
+    <Provider store={store}>
+      <AppContainer>
+        <Component />
+      </AppContainer>
+    </Provider>,
     document.getElementById('root')
   )
 }
