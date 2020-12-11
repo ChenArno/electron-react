@@ -14,10 +14,10 @@ const net = window.require("net");
 const sideWidth = 400
 let server: any = null
 let socket: any = null
-
+const { REACT_APP_VERSION } = process.env
 interface HomeProps { }
 const Home: React.FC<HomeProps> = (props) => {
-  const { REACT_APP_VERSION } = process.env
+
   // const childRef: any = useRef()
   const [textArea, setTextArea] = useState<string>('')
   const [status, setStatus] = useState(false)
@@ -25,7 +25,6 @@ const Home: React.FC<HomeProps> = (props) => {
   const child: any = useRef()
 
   useEffect(() => {
-    console.log(process.env)
     return () => {
 
     }
@@ -90,7 +89,7 @@ const Home: React.FC<HomeProps> = (props) => {
     <Layout className={styles.lay}>
       <Layout.Header className={styles.head}>
         <div>智能灯调式工具</div>
-        <div>{REACT_APP_VERSION}</div>
+        <div>V{REACT_APP_VERSION}</div>
       </Layout.Header>
       <Layout>
         <Layout.Content>

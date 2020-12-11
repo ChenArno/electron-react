@@ -11,6 +11,7 @@ const webpack = require('webpack')
 const { outDirSrc } = require('./utils')
 const theme = require('./theme')
 const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
+const { version, description } = require('../package.json')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -50,7 +51,10 @@ module.exports = {
   plugins: [
     // 环境变量配置
     new webpack.DefinePlugin({
-      'process.env': require(`./${process.env.NODE_ENV}.env`)
+      'process.env': {
+        ...require(`./${process.env.NODE_ENV}.env`),
+        REACT_APP_VERSION: `"${version}"`
+      }
     }),
     new AntdDayjsWebpackPlugin()
   ],
