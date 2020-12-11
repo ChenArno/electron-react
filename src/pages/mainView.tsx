@@ -2,9 +2,11 @@ import React, { useEffect, useState, useRef, useImperativeHandle, forwardRef } f
 import { InputNumber, Row, Col, Button, Form, Input, Table, message } from 'antd'
 import { AlertOutlined, BellOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { connect } from 'react-redux'
+import { strToHexCharCode } from '@/commons/handData'
 import styles from './index.module.less'
 
 interface MainViewProps {
+	socket?: any;
 	loading?: boolean;
 	status: boolean;
 	onClick: (value: number) => void;
@@ -21,10 +23,10 @@ const buttnList: any = [{
 	label: '全灭'
 }]
 const MainView: React.FC<MainViewProps> = (props, ref: any) => {
-	const { onClick, loading, status, clear, baseMsg } = props
+	const { socket, onClick, loading, status, clear, baseMsg } = props
 	const inputRef: any = useRef(null)
 	const [dataSource, setDataSource] = useState([])
-	const [tableLoading, setTableLoading] = useState(false)
+	const [tableLoading] = useState(false)
 
 	useImperativeHandle(ref, () => {
 		return {
@@ -33,7 +35,11 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	})
 
 	const onSubmit = (val: any, tagId?: string) => {
-		setTableLoading(true)
+		// setTableLoading(true)
+		console.log(socket)
+		console.log(tagId)
+		console.log(strToHexCharCode(tagId))
+		// socket.write([0x89, 0x00])
 	}
 
 	const columns = [{
@@ -89,7 +95,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	{
 		title: '操作',
 		dataIndex: 'action',
-		render: (text: number) => (<a>删除</a>)
+		render: (text: any, record: any) => (<a onClick={() => onDelete(record.id)}>删除</a>)
 	}]
 
 	useEffect(() => {
@@ -106,7 +112,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 			}
 			return e
 		}))
-		setTableLoading(false)
+		// setTableLoading(false)
 	}, [baseMsg])
 
 	const onFinish = ({ id }: any) => {
@@ -116,6 +122,9 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		setDataSource(o => o = [...o, { id, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 }])
 	}
 
+	const onDelete = (val: string) => {
+		setDataSource(o => o.filter(item => item.id === val))
+	}
 	return <div className={styles.main}>
 		<Row gutter={16} className={styles['main-cell']}>
 			<Col span={6}><span>服务器端口</span></Col>

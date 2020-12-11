@@ -70,6 +70,7 @@ const Home: React.FC<HomeProps> = (props) => {
         console.log('client closed!');
         setStatus(false)
         server.close()
+        socket = null
         // socket.remoteAddress + ' ' + socket.remotePort);
       });
     }).listen(val)
@@ -93,7 +94,7 @@ const Home: React.FC<HomeProps> = (props) => {
       </Layout.Header>
       <Layout>
         <Layout.Content>
-          <MainView ref={child} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
+          <MainView socket={socket} ref={child} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
         </Layout.Content>
         <Layout.Sider width={sideWidth} className={styles.side}>
           <CodeMirror

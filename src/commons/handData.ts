@@ -47,3 +47,16 @@ export function valueAtBit(str: string, bit: number) {
 	return Number(num[bit - 1]);
 	// return (num >> (bit - 1)) & 1; //会漏位
 }
+
+
+// 字符串转16进制
+
+export function strToHexCharCode(str: string) {
+	if (str === "") return "";
+	let hexCharCode: Array<any> = [];
+	for (var i = 0; i < str.length / 2; i++) {
+		hexCharCode = [...hexCharCode, '0x' + str.substr(2 * i, 2)]
+	}
+	return hexCharCode;
+}
+
