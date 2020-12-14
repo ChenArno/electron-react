@@ -1,7 +1,9 @@
 export const BASEMSG = "info/BASEMSG"
 
 const initState: any = {
-	baseMsg: {}
+	baseMsg: {
+		model: 0 // 0为正常塔灯；1为智能灯模式
+	}
 }
 
 export default function reducer(state = initState, action: any) {

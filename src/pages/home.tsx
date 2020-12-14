@@ -52,10 +52,8 @@ const Home: React.FC<HomeProps> = (props) => {
           o = `[${dayjs().format('HH:mm:ss')}] ${res}\n` + o
           return o
         })
-        // console.log(child.current.getData())
-        handMessage(buffer_to_hex(buf))
+        handMessage(buf)
       });
-      // socket.write('Hello client!\r\n');
       // socket.pipe(socket);
       //数据错误事件
       socket.on('error', (exception: any) => {

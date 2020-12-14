@@ -55,3 +55,16 @@ export function int2hex(num: number, width: number) {
 	}
 	return "0x" + padding + s;
 }
+
+// 求和校验
+export function arrToSum(data: Array<any>): string {
+	let back = data.reduce((acc: number, cur: number) => { // 累加
+		return acc + cur
+	}, 0).toString(16)
+	if (back.length === 1) {
+		back = '0' + back
+	} else if (back.length > 2) {
+		back = back.substring(back.length - 2)
+	}
+	return back
+}
