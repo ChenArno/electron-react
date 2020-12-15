@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { Layout, message } from 'antd';
 import styles from './index.module.less'
 import dayjs from 'dayjs'
@@ -7,6 +7,7 @@ import { buffer_to_hex } from '@/utils/base'
 import CodeMirror from '@uiw/react-codemirror';
 import 'codemirror/keymap/sublime';
 import MainView from './mainView'
+import Header from './header'
 import { handMessage } from '@/commons/handData'
 
 const net = window.require("net");
@@ -14,7 +15,7 @@ const net = window.require("net");
 const sideWidth = 400
 let server: any = null
 let socket: any = null
-const { REACT_APP_VERSION } = process.env
+
 interface HomeProps { }
 const Home: React.FC<HomeProps> = (props) => {
 
@@ -22,7 +23,6 @@ const Home: React.FC<HomeProps> = (props) => {
   const [textArea, setTextArea] = useState<string>('')
   const [status, setStatus] = useState(false)
   const [loading, setLoading] = useState(false)
-  const child: any = useRef()
 
   const onClick = ({ ip, port }: any) => {
     if (!port || !ip) return message.warning('请先选择ip或者输入端口号');
@@ -93,13 +93,10 @@ const Home: React.FC<HomeProps> = (props) => {
 
   return (
     <Layout className={styles.lay}>
-      <Layout.Header className={styles.head}>
-        <div>智能灯调式工具</div>
-        <div>V{REACT_APP_VERSION}</div>
-      </Layout.Header>
+      <Header></Header>
       <Layout>
         <Layout.Content>
-          <MainView socket={socket} ref={child} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
+          <MainView socket={socket} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
         </Layout.Content>
         <Layout.Sider width={sideWidth} className={styles.side}>
           <CodeMirror

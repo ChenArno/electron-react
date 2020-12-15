@@ -4,7 +4,9 @@ class Constants {
 	static cont_msgId_smart = [0x55, 0x00] // 塔灯的状态上报及需求同步
 	static cont_reserved = [0x01, 0x00] // 预留
 	static cont_respReserved = [0x00, 0x00] //数据发送预留
-	static AP_Config_BeaconMode = [0x08, 0x80]
+	static AP_Config_BeaconMode = [0x08, 0x80] // 修改TD的上报模式
+	static AP_Config_RfBase = [0x06, 0x80] // 修改基站频率
+	static ED_Config_RfBase = [0x05, 0x80]// 修改标签频率
 
 	static model: any = {
 		0: '塔灯',

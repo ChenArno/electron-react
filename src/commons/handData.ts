@@ -64,6 +64,18 @@ export function strToHexCharCode(str: string) {
 	return hexCharCode;
 }
 
+// 字符串转32进制
+
+export function strTo32HexCharCode(num: number) {
+	const str = num.toString(16)
+	const str1 = new Array(8 - str.length + 1).join('0') + str
+	let hexCharCode: Array<any> = [];
+	for (var i = 0; i < str.length / 2; i++) {
+		hexCharCode = [...hexCharCode, parseInt(str1.substr(2 * i, 2), 16)]
+	}
+	return hexCharCode.reverse();
+}
+
 //取bit
 export function light2Bit(val: any, status: any) {
 	const coll = { ...status, ...val }
