@@ -68,7 +68,7 @@ export function strToHexCharCode(str: string) {
 export function light2Bit(val: any, status: any) {
 	const coll = { ...status, ...val }
 	let v = ''
-	Object.keys(coll).forEach(o => v += coll[o] + '')
+	Object.keys(coll).filter(o => o === 'yellow' || o === 'red' || o === 'green').forEach(o => v += coll[o] + '')
 	// console.log(v)
 	return [parseInt(v, 2)] // 2进制转10进制
 }

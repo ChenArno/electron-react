@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react'
-import { InputNumber, Row, Col, Button, Form, Input, Table, message, Spin } from 'antd'
+import { InputNumber, Row, Col, Button, Form, Input, Table, message, Spin, Divider } from 'antd'
 import { AlertOutlined, BellOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { connect } from 'react-redux'
 import { strToHexCharCode, valueAtBit, light2Bit } from '@/commons/handData'
@@ -15,15 +15,6 @@ interface MainViewProps {
 	clear?: () => void;
 	baseMsg: any;
 }
-const buttnList: any = [{
-	id: 4,
-	type: 'primary',
-	label: '全亮'
-}, {
-	id: 5,
-	type: 'default',
-	label: '全灭'
-}]
 const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	const { socket, onClick, loading, status, clear, baseMsg } = props
 	const inputRef: any = useRef(null)
@@ -50,28 +41,26 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		]
 		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
 		socket.write(Buffer.from(sendMsg)) // Array to ArrayBuffer
+		message.success('已下发')
 	}
 
 	const onSubmit = (val: any, detail?: any) => {
-		const { id: tagId, red, yellow, green } = detail
-		// setTableLoading(true)
+		const { id: tagId, red, yellow, green, } = detail
 		const lightVal = light2Bit(val, { yellow, green, red })
-		console.log(lightVal)
-		const { baseCode } = baseMsg
-
-		const bodyMsg = [...strToHexCharCode(tagId), ...lightVal, 0x00, Constants.cont_respReserved]
-		console.log(bodyMsg.length)
-		const sendMsg = [
+		const { baseCode, model, BellState } = baseMsg
+		const bodyMsg = [...strToHexCharCode(tagId), ...lightVal, val.BellState !== undefined ? val.BellState : BellState, ...Constants.cont_respReserved]
+		const msgType = model === 1 ? Constants.cont_msgId_smart : Constants.cont_msgId_Tower
+		let sendMsg = [
 			...Constants.cont_head,
 			...Constants.cont_reserved,
 			...baseCode,
-			...Constants.cont_msgId_Tower,
+			...msgType,
+			...[bodyMsg.length, 0x00],
 			...bodyMsg
 		]
-		console.log(sendMsg)
-		console.log(baseMsg)
-		console.log(socket)
-		// socket.write([0x89, 0x00])
+		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
+		socket.write(Buffer.from(sendMsg))
+		message.success('已下发')
 	}
 
 	const columns = [{
@@ -80,12 +69,12 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		key: 'id',
 	},
 	{
-		title: '硬件信息',
+		title: '硬件',
 		dataIndex: 'HWType',
 		key: 'HWType',
 	},
 	{
-		title: '软件版本',
+		title: '软件',
 		dataIndex: 'SWVersion',
 		key: 'SWVersion',
 	},
@@ -94,7 +83,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		dataIndex: 'red',
 		key: 'red',
 		render: (text: number, recod: any) => (
-			<span onClick={() => { onSubmit({ red: text === 1 ? 0 : 1 }, recod) }} >
+			<span className={styles.btn} onClick={() => { onSubmit({ red: text === 1 ? 0 : 1 }, recod) }} >
 				{text === 1 ? <AlertOutlined style={{ color: 'red' }} /> : <PoweroffOutlined />}
 			</span>)
 	}, {
@@ -102,7 +91,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		dataIndex: 'yellow',
 		key: 'yellow',
 		render: (text: number, recod: any) => (
-			<span onClick={() => { onSubmit({ yellow: text === 1 ? 0 : 1 }, recod) }} >
+			<span className={styles.btn} onClick={() => { onSubmit({ yellow: text === 1 ? 0 : 1 }, recod) }} >
 				{text === 1 ? <AlertOutlined style={{ color: 'rgb(181, 181, 6)' }} /> : <PoweroffOutlined />}
 			</span>
 		)
@@ -111,7 +100,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		dataIndex: 'green',
 		key: 'green',
 		render: (text: number, recod: any) => (
-			<span onClick={() => { onSubmit({ green: text === 1 ? 0 : 1 }, recod) }} >
+			<span className={styles.btn} onClick={() => { onSubmit({ green: text === 1 ? 0 : 1 }, recod) }} >
 				{text === 1 ? <AlertOutlined style={{ color: 'green' }} /> : <PoweroffOutlined />}
 			</span>
 		)
@@ -120,19 +109,28 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		title: '蜂鸣',
 		dataIndex: 'BellState',
 		key: 'BellState',
-		render: (text: number) => (<span>
-			{text === 1 ? <BellOutlined /> : <></>}
+		render: (text: number, recod: any) => (<span className={styles.btn} onClick={() => { onSubmit({ BellState: text === 1 ? 0 : 1 }, recod) }}>
+			{text === 1 ? <BellOutlined /> : <PoweroffOutlined />}
 		</span>)
 	},
 	{
 		title: '操作',
 		dataIndex: 'action',
-		render: (text: any, record: any) => (<a onClick={() => onDelete(record.id)}>删除</a>)
+		render: (text: any, record: any) => (
+			<>
+				<a onClick={() => { onSubmit({ yellow: 1, green: 1, red: 1 }, record) }}>全亮</a>
+				<Divider type="vertical" />
+				<a onClick={() => { onSubmit({ yellow: 0, green: 0, red: 0 }, record) }}>全灭</a>
+				<Divider type="vertical" />
+				<a onClick={() => onDelete(record.id)}>删除</a>
+			</>
+		)
 	}]
 
 	useEffect(() => {
 		const { tagId, LedState, BellState, HWType, SWVersion } = baseMsg
 		if (dataSource.findIndex(o => o.id === tagId) === -1) return
+		// console.log(baseMsg)
 		setDataSource((o: Array<any>) => o.map(e => {
 			if (e.id === tagId) {
 				const colorState = parseInt(LedState, 16).toString(2)
@@ -151,12 +149,13 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	const onFinish = ({ id }: any) => {
 		if (!id) return message.warning('不能为空')
 		if (id.length !== 8) return message.warning('标签编号格式不正确')
+		id = id.toUpperCase()
 		if (dataSource.findIndex(o => o.id === id) > -1) return message.warning('标签已存在')
 		setDataSource(o => o = [...o, { id, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 }])
 	}
 
 	const onDelete = (val: string) => {
-		setDataSource(o => o.filter(item => item.id === val))
+		setDataSource(o => o.filter(item => item.id !== val))
 	}
 	return <Spin spinning={loading}>
 		<div className={styles.main}>
@@ -182,7 +181,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 				<Button>导入标签</Button>
 			</div>
 			<div style={{ marginTop: '20px' }}>
-				<Form initialValues={{ id: '' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
+				<Form initialValues={{ id: '06000034' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
 					<Form.Item label="控制盒ID" name="id">
 						<Input />
 					</Form.Item>
@@ -195,9 +194,6 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
           </Button>
 					</Form.Item>
 				</Form>
-				{buttnList.map((o: any) => (<Button key={o.id} type={o.type} style={{ marginBottom: '10px', marginRight: '10px' }} onClick={() => { onSubmit(o.id) }}>
-					{o.label}
-				</Button>))}
 				<Table loading={tableLoading} rowKey={columns => columns.id} size="small" dataSource={dataSource} columns={columns} pagination={false} />
 			</div>
 		</div>

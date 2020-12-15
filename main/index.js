@@ -12,7 +12,7 @@ function createWindow() {
 	// 隐藏菜单栏
 	Menu.setApplicationMenu(null)
 	mainWindow = new BrowserWindow({
-		width: 800,
+		width: 900,
 		height: 600,
 		frame: true,
 		webPreferences: {
