@@ -1,3 +1,5 @@
+const os = window.require("os");
+
 // buffer转16进制
 export function buffer_to_hex(__buffer: any) {
 	// return Array.prototype.map.call(__buffer, ((d: any) => d.toString(16))).join(' ')
@@ -67,4 +69,19 @@ export function arrToSum(data: Array<any>): string {
 		back = back.substring(back.length - 2)
 	}
 	return back
+}
+
+export function getLocalIP() {
+	const interfaces = os.networkInterfaces();
+	let map = []
+	for (let devName in interfaces) {
+		const iface = interfaces[devName];
+		for (let i = 0; i < iface.length; i++) {
+			let alias = iface[i];
+			if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal && devName.indexOf('en') > -1) {
+				map.push(alias.address);
+			}
+		}
+	}
+	return map
 }

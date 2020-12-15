@@ -1,17 +1,18 @@
 import React, { useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react'
-import { InputNumber, Row, Col, Button, Form, Input, Table, message, Spin, Divider } from 'antd'
+import { InputNumber, Button, Form, Input, Table, message, Spin, Divider, Select } from 'antd'
 import { AlertOutlined, BellOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { connect } from 'react-redux'
 import { strToHexCharCode, valueAtBit, light2Bit } from '@/commons/handData'
 import styles from './index.module.less'
-import { arrToSum } from '@/utils/base'
+import { arrToSum, getLocalIP } from '@/utils/base'
 import Constants from '@/commons/constants'
+
 
 interface MainViewProps {
 	socket?: any;
 	loading?: boolean;
 	status: boolean;
-	onClick: (value: number) => void;
+	onClick: (value: any) => void;
 	clear?: () => void;
 	baseMsg: any;
 }
@@ -26,7 +27,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 			getData: dataSource
 		}
 	})
-
+	// 切换灯模式
 	const changeModel = () => {
 		const { baseCode, model } = baseMsg
 		const bodyMsg = [model === 1 ? 0x00 : 0x01, 0x00, 0x00, 0x00, 0x00]
@@ -43,7 +44,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		socket.write(Buffer.from(sendMsg)) // Array to ArrayBuffer
 		message.success('已下发')
 	}
-
+	//控制红黄绿灯，蜂鸣
 	const onSubmit = (val: any, detail?: any) => {
 		const { id: tagId, red, yellow, green, } = detail
 		const lightVal = light2Bit(val, { yellow, green, red })
@@ -159,22 +160,30 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	}
 	return <Spin spinning={loading}>
 		<div className={styles.main}>
-			<Row gutter={16} className={styles['main-cell']}>
-				<Col span={6}><span>服务器端口</span></Col>
-				<Col span={12}>
+			<Form initialValues={{ port: 2000 }} layout="inline" size="small"
+				onFinish={(val: any) => onClick(val)}
+				style={{ marginBottom: '20px', marginTop: '10px' }}>
+				<Form.Item style={{ width: '140px' }} name="ip">
+					<Select>
+						{getLocalIP().map(o => <Select.Option key={o} value={o}>{o}</Select.Option>)}
+					</Select>
+				</Form.Item>
+				<Form.Item name="port">
 					<InputNumber
 						ref={inputRef}
 						placeholder="请输入服务器端口"
-						defaultValue={2000}
 					/>
-					<Button type="primary" onClick={() => {
-						onClick(inputRef.current.getInputDisplayValue())
-					}}>{status ? '关闭' : '打开'}</Button>
-				</Col>
-				<Col span={6}>
-					<Button onClick={clear}>清除日志</Button>
-				</Col>
-			</Row>
+				</Form.Item>
+				<Form.Item >
+					<Button
+						type="primary"
+						htmlType="submit"
+					>
+						{status ? '关闭' : '打开'}
+					</Button>
+					<Button style={{ marginLeft: 10 }} onClick={clear}>清除日志</Button>
+				</Form.Item>
+			</Form>
 			<div className={styles.exp}>
 				<span>当期模式:{Constants.model[baseMsg.model]}</span>
 				<Button type="default" style={{ marginLeft: 10, marginRight: 10 }} onClick={changeModel}>切换</Button>

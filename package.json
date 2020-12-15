@@ -22,6 +22,7 @@
       }
     ],
     "win": {
+      "icon": "./app/icons/head256.ico",
       "artifactName": "${productName}_setup_${version}.${ext}"
     },
     "nsis": {

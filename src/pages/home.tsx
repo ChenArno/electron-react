@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { Layout, message } from 'antd';
 import styles from './index.module.less'
 import dayjs from 'dayjs'
@@ -24,16 +24,15 @@ const Home: React.FC<HomeProps> = (props) => {
   const [loading, setLoading] = useState(false)
   const child: any = useRef()
 
-  useEffect(() => {
-    return () => {
-
-    }
-  }, [])
-
-  const onClick = (val = 2000) => {
-    if (!val) return message.warning('请先输入端口号');
+  const onClick = ({ ip, port }: any) => {
+    if (!port || !ip) return message.warning('请先选择ip或者输入端口号');
     if (status) {
-      socket.destroy()
+      if (socket) {
+        socket.destroy()
+      } else {
+        server.close()
+        setStatus(false)
+      }
       return
     }
     setLoading(true)
@@ -42,8 +41,7 @@ const Home: React.FC<HomeProps> = (props) => {
       // 创建socket服务端
       console.log('connect: ' +
         socket.remoteAddress + ':' + socket.remotePort);
-      setStatus(true)
-      setLoading(false)
+
       //接收到数据
       socket.on('data', (buf: any) => {
         let res = buffer_to_hex(buf) + ""
@@ -58,29 +56,38 @@ const Home: React.FC<HomeProps> = (props) => {
       //数据错误事件
       socket.on('error', (exception: any) => {
         setLoading(false)
-        console.log('socket error:' + exception);
+        message.warning('socket error:' + exception);
         socket.end();
         setStatus(false)
       });
       //客户端关闭事件
       socket.on('close', (data: any) => {
         setLoading(false)
-        console.log('client closed!');
+        message.warning('client closed!');
         setStatus(false)
         server.close()
         socket = null
         // socket.remoteAddress + ' ' + socket.remotePort);
       });
-    }).listen(val)
+      //设置超时时间
+      socket.setTimeout(1000 * 10);
+      //监听到超时事件，断开连接
+      socket.on('timeout', function () {
+        message.warning('客户端在' + 10 + 's内未通信，将断开连接...');
+        socket.destroy();
+      });
+    }).listen({ port, host: ip })
     // console.log(server)
     //服务器监听事件
     server.on('listening', () => {
-      console.log("server listening:" + server.address().port);
+      setStatus(true)
+      setLoading(false)
+      message.success("server listening:" + server.address().address + ":" + server.address().port);
     });
     //服务器错误事件
     server.on("error", (exception: any) => {
       setLoading(false)
-      console.log("server error:" + exception);
+      message.warning("server error:" + exception);
     });
   }
 
