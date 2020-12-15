@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react'
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from 'react'
 import { InputNumber, Button, Form, Input, Table, message, Spin, Divider, Select } from 'antd'
 import { AlertOutlined, BellOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { connect } from 'react-redux'
@@ -18,7 +18,6 @@ interface MainViewProps {
 }
 const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	const { socket, onClick, loading, status, clear, baseMsg } = props
-	const inputRef: any = useRef(null)
 	const [dataSource, setDataSource] = useState([])
 	const [tableLoading] = useState(false)
 
@@ -160,7 +159,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	}
 	return <Spin spinning={loading}>
 		<div className={styles.main}>
-			<Form initialValues={{ port: 2000 }} layout="inline" size="small"
+			<Form initialValues={{ port: 2000 }} layout="inline"
 				onFinish={(val: any) => onClick(val)}
 				style={{ marginBottom: '20px', marginTop: '10px' }}>
 				<Form.Item style={{ width: '140px' }} name="ip">
@@ -170,7 +169,6 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 				</Form.Item>
 				<Form.Item name="port">
 					<InputNumber
-						ref={inputRef}
 						placeholder="请输入服务器端口"
 					/>
 				</Form.Item>

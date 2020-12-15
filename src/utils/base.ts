@@ -78,7 +78,7 @@ export function getLocalIP() {
 		const iface = interfaces[devName];
 		for (let i = 0; i < iface.length; i++) {
 			let alias = iface[i];
-			if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal && devName.indexOf('en') > -1) {
+			if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal && (devName.indexOf('en') > -1 || devName.indexOf('以太网') > -1)) {
 				map.push(alias.address);
 			}
 		}

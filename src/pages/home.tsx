@@ -69,13 +69,13 @@ const Home: React.FC<HomeProps> = (props) => {
         socket = null
         // socket.remoteAddress + ' ' + socket.remotePort);
       });
-      //设置超时时间
-      socket.setTimeout(1000 * 10);
-      //监听到超时事件，断开连接
-      socket.on('timeout', function () {
-        message.warning('客户端在' + 10 + 's内未通信，将断开连接...');
-        socket.destroy();
-      });
+      // //设置超时时间
+      // socket.setTimeout(1000 * 10);
+      // //监听到超时事件，断开连接
+      // socket.on('timeout', function () {
+      //   message.warning('客户端在' + 10 + 's内未通信，将断开连接...');
+      //   socket.destroy();
+      // });
     }).listen({ port, host: ip })
     // console.log(server)
     //服务器监听事件

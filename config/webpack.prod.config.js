@@ -29,6 +29,7 @@ const webpackProdConfig = merge(common, {
   output: {
     filename: 'js/[name].[chunkhash:8].bundle.js'
   },
+  devtool: false,
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html', // filename：打包之后的html文件名字
