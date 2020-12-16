@@ -145,7 +145,6 @@ const TemTable: React.FC<TemTableProps> = props => {
 		setDataSource(o => o = [...o, { id, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 }])
 	}
 	const getXlsx = (data: any) => {
-		console.log(data)
 		setDataSource(data.map((o: any) => ({ id: o, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 })))
 	}
 

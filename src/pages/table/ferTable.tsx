@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Divider, message, Form, Input, Button, Select } from 'antd'
+import { Table, Divider, message, Form, Input, Button, Select, Space } from 'antd'
 import { strToHexCharCode, strTo32HexCharCode } from '@/commons/handData'
 import Constants from '@/commons/constants'
 import { arrToSum } from '@/utils/base'
 import { connect } from 'react-redux'
+import ImportBtn from '../compants/importBtn'
 
 const { remote: { app } } = window.require('electron')
 const { readSync } = window.require('node-yaml')
@@ -129,6 +130,10 @@ const TemTable: React.FC<TemTableProps> = props => {
 		message.success('已下发')
 	}
 
+	const getXlsx = (data: any) => {
+		setDataSource(data.map((o: any) => ({ id: o, frequency: 37000000, num: 0 })))
+	}
+
 	return <div>
 		<Form initialValues={{ fig1: 37000000, fig2: 38000000 }} layout="inline" onFinish={onUpdateIfy}>
 			<Form.Item name="fig1">
@@ -151,17 +156,22 @@ const TemTable: React.FC<TemTableProps> = props => {
 				>修改基站频率</Button>
 			</Form.Item>
 		</Form>
-		<Form initialValues={{ id: '06000034' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
+		<Form initialValues={{ id: '06000034' }} layout="inline"
+			style={{ marginBottom: '20px', marginTop: '10px' }}
+			onFinish={onFinish}>
 			<Form.Item label="标签ID" name="id">
 				<Input />
 			</Form.Item>
 			<Form.Item >
-				<Button
-					type="primary"
-					htmlType="submit"
-				>
-					提交
+				<Space>
+					<Button
+						type="primary"
+						htmlType="submit"
+					>
+						提交
           </Button>
+					<ImportBtn onClick={getXlsx} />
+				</Space>
 			</Form.Item>
 		</Form>
 		<Table loading={tableLoading} rowKey={columns => columns.id} size="small" dataSource={dataSource} columns={columns} pagination={false} />
