@@ -21,9 +21,9 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 	const { socket, onClick, loading, status, clear, baseMsg, menuItem } = props
 
 	// 切换灯模式
-	const changeModel = () => {
-		const { baseCode, model } = baseMsg
-		const bodyMsg = [model === 1 ? 0x00 : 0x01, 0x00, 0x00, 0x00, 0x00]
+	const changeModel = (model: number) => {
+		const { baseCode } = baseMsg
+		const bodyMsg = [model, 0x00, 0x00, 0x00, 0x00]
 		let sendMsg = [
 			...Constants.cont_head,
 			...Constants.cont_reserved,
@@ -63,8 +63,8 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 				</Form.Item>
 			</Form>
 			<Space className={styles.exp}>
-				<span>当期模式:{Constants.model[baseMsg.model]}</span>
-				<Button type="default" onClick={changeModel}>切换</Button>
+				<Button type="default" onClick={() => changeModel(0x00)}>塔灯</Button>
+				<Button type="primary" onClick={() => changeModel(0x01)}>智能灯</Button>
 				<Button>导入标签</Button>
 			</Space>
 			<div style={{ marginTop: '20px' }}>

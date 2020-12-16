@@ -63,7 +63,7 @@ const TemTable: React.FC<TemTableProps> = props => {
 		title: '蜂鸣',
 		dataIndex: 'BellState',
 		key: 'BellState',
-		render: (text: number, recod: any) => (<span className={styles.btn} onClick={() => { onSubmit({ BellState: text === 1 ? 0 : 1 }, recod) }}>
+		render: (text: number, recod: any) => (<span className={styles.btn} onClick={() => { onBell(text === 1 ? 0 : 1, recod) }}>
 			{text === 1 ? <BellOutlined /> : <PoweroffOutlined />}
 		</span>)
 	},
@@ -82,9 +82,8 @@ const TemTable: React.FC<TemTableProps> = props => {
 	}]
 
 	useEffect(() => {
-		const { tagId, LedState, BellState, HWType, SWVersion } = baseMsg
-		if (dataSource.findIndex(o => o.id === tagId) === -1) return
-		// console.log(baseMsg)
+		const { msgId, tagId, LedState, BellState, HWType, SWVersion } = baseMsg
+		if ((msgId !== 84 || msgId !== 85) && dataSource.findIndex(o => o.id === tagId) === -1) return
 		setDataSource((o: Array<any>) => o.map(e => {
 			if (e.id === tagId) {
 				const colorState = parseInt(LedState, 16).toString(2)
@@ -99,6 +98,20 @@ const TemTable: React.FC<TemTableProps> = props => {
 		}))
 		// setTableLoading(false)
 	}, [baseMsg])
+	const commSend = (bodyMsg: any) => {
+		const { baseCode } = baseMsg
+		let sendMsg = [
+			...Constants.cont_head,
+			...Constants.cont_reserved,
+			...baseCode,
+			...Constants.cont_msgId_Tower, // 此处不做区分塔灯和智能灯
+			...[bodyMsg.length, 0x00],
+			...bodyMsg
+		]
+		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
+		socket.write(Buffer.from(sendMsg))
+		message.success('已下发')
+	}
 
 	const onDelete = (val: string) => {
 		setDataSource(o => o.filter(item => item.id !== val))
@@ -108,21 +121,19 @@ const TemTable: React.FC<TemTableProps> = props => {
 	const onSubmit = (val: any, detail?: any) => {
 		const { id: tagId, red, yellow, green, } = detail
 		const lightVal = light2Bit(val, { yellow, green, red })
-		const { baseCode, model, BellState } = baseMsg
-		if (!baseCode) return
-		const bodyMsg = [...strToHexCharCode(tagId), ...lightVal, val.BellState !== undefined ? val.BellState : BellState, ...Constants.cont_respReserved]
-		const msgType = model === 1 ? Constants.cont_msgId_smart : Constants.cont_msgId_Tower
-		let sendMsg = [
-			...Constants.cont_head,
-			...Constants.cont_reserved,
-			...baseCode,
-			...msgType,
-			...[bodyMsg.length, 0x00],
-			...bodyMsg
-		]
-		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
-		socket.write(Buffer.from(sendMsg))
-		message.success('已下发')
+		const { baseCode, BellState } = baseMsg
+		if (!baseCode) return message.warning('未获取到基站编号，请等待')
+		const bodyMsg = [...strToHexCharCode(tagId), ...lightVal, BellState, ...Constants.cont_respReserved]
+		commSend(bodyMsg)
+	}
+
+	const onBell = (val: number, detail?: any) => {
+		const { id: tagId, red, yellow, green, } = detail
+		const lightVal = light2Bit(val, { yellow, green, red })
+		const { baseCode } = baseMsg
+		if (!baseCode) return message.warning('未获取到基站编号，请等待')
+		const bodyMsg = [...strToHexCharCode(tagId), ...lightVal, val, ...Constants.cont_respReserved]
+		commSend(bodyMsg)
 	}
 
 	const onFinish = ({ id }: any) => {
@@ -135,7 +146,7 @@ const TemTable: React.FC<TemTableProps> = props => {
 
 	return <div>
 		<Form initialValues={{ id: '06000034' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
-			<Form.Item label="控制盒ID" name="id">
+			<Form.Item label="标签ID" name="id">
 				<Input />
 			</Form.Item>
 			<Form.Item >

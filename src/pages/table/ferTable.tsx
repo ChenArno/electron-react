@@ -23,6 +23,11 @@ const TemTable: React.FC<TemTableProps> = props => {
 		key: 'id',
 	},
 	{
+		title: '上报状态',
+		dataIndex: 'num',
+		key: 'num',
+	},
+	{
 		title: '频率',
 		dataIndex: 'frequency',
 		key: 'frequency',
@@ -62,16 +67,42 @@ const TemTable: React.FC<TemTableProps> = props => {
 		})
 	}, [])
 
+	useEffect(() => {
+		const { tagId } = baseMsg
+		if (dataSource.findIndex(o => o.id === tagId) === -1) return
+		// console.log(baseMsg)
+		setDataSource((o: Array<any>) => o.map(e => {
+			if (e.id === tagId) {
+				e.num = 1
+			}
+			return e
+		}))
+		// setTableLoading(false)
+	}, [baseMsg])
+
 	const onSet = (val: any) => {
-		console.log(val)
-		// setDataSource((o: Array<any>) => o.map(e => {
-		// 	if (e.id === val.id) {
-		// 		e.SWVersion = SWVersion
-		// 		e.BellState = BellState
-		// 		e.HWType = HWType
-		// 	}
-		// 	return e
-		// }))
+		const { id: tagId, frequency } = val
+		const { baseCode } = baseMsg
+		if (!baseCode) return message.warning('未获取到基站编号，请等待')
+		const bodyMsg = [...strToHexCharCode(tagId), ...strTo32HexCharCode(frequency), 0x47, 0xA5]
+		let sendMsg = [
+			...Constants.cont_head,
+			...Constants.cont_reserved,
+			...baseCode, // FF FF FF FF无差别下发
+			// ...[0xFF, 0xFF, 0xFF, 0xFF],
+			...Constants.ED_Config_RfBase,
+			...[bodyMsg.length, 0x00],
+			...bodyMsg
+		]
+		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
+		socket.write(Buffer.from(sendMsg)) // Array to ArrayBuffer
+		setDataSource((o: Array<any>) => o.map(e => {
+			if (e.id === tagId) {
+				e.num = 0
+			}
+			return e
+		}))
+		message.success('已下发')
 	}
 	const onDelete = (val: string) => {
 		setDataSource(o => o.filter(item => item.id !== val))
@@ -82,15 +113,14 @@ const TemTable: React.FC<TemTableProps> = props => {
 		if (id.length !== 8) return message.warning('标签编号格式不正确')
 		id = id.toUpperCase()
 		if (dataSource.findIndex(o => o.id === id) > -1) return message.warning('标签已存在')
-		setDataSource(o => o = [...o, { id, frequency: 600000 }])
+		setDataSource(o => o = [...o, { id, frequency: 37000000, num: 0 }])
 	}
 
 	const onUpdateIfy = (val: any) => {
 		const { fig1, fig2 } = val
-		console.log(fig1, strTo32HexCharCode(fig1), strTo32HexCharCode(fig2))
 		const { baseCode } = baseMsg
-		if (!baseCode) return
-		const bodyMsg = [0x01, 0x00, 0x00, 0x00, 0x00]
+		if (!baseCode) return message.warning('未获取到基站编号，请等待')
+		const bodyMsg = [...strTo32HexCharCode(fig1), ...strTo32HexCharCode(fig2), 0x47, 0xA5]
 		let sendMsg = [
 			...Constants.cont_head,
 			...Constants.cont_reserved,
@@ -98,18 +128,15 @@ const TemTable: React.FC<TemTableProps> = props => {
 			// ...[0xFF, 0xFF, 0xFF, 0xFF],
 			...Constants.AP_Config_RfBase,
 			...[bodyMsg.length, 0x00],
-			...bodyMsg,
-			...[0x47, 0xA5]
+			...bodyMsg
 		]
-		console.log(sendMsg)
-		console.log(socket)
 		sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
-		// socket.write(Buffer.from(sendMsg)) // Array to ArrayBuffer
+		socket.write(Buffer.from(sendMsg)) // Array to ArrayBuffer
 		message.success('已下发')
 	}
 
 	return <div>
-		<Form initialValues={{ fig1: 500000, fig2: 500000 }} layout="inline" onFinish={onUpdateIfy}>
+		<Form initialValues={{ fig1: 37000000, fig2: 38000000 }} layout="inline" onFinish={onUpdateIfy}>
 			<Form.Item name="fig1">
 				<Select style={{ width: '100px' }}>
 					{frequency.map((o: any) => (
@@ -131,7 +158,7 @@ const TemTable: React.FC<TemTableProps> = props => {
 			</Form.Item>
 		</Form>
 		<Form initialValues={{ id: '06000034' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
-			<Form.Item label="控制盒ID" name="id">
+			<Form.Item label="标签ID" name="id">
 				<Input />
 			</Form.Item>
 			<Form.Item >

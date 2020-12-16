@@ -10,9 +10,11 @@ export function handMessage(arr: any): any {
 	if (head.toString() !== buffer_to_hex(Contants.cont_head).toString()) {
 		return null
 	}
-	const msgId = str.slice(8, 10)
-
-	if (msgId == buffer_to_hex(Contants.cont_msgId_Tower).toString() || msgId == buffer_to_hex(Contants.cont_msgId_smart).toString()) { // 塔灯的状态上报及需求同步
+	const msgId = Array.prototype.slice.call(arr.slice(8, 10))
+	if (JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_Tower)
+		|| JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_smart)
+		|| JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_keys)
+	) { // 塔灯的状态上报及需求同步
 		const baseCode = arr.slice(4, 8)
 		const tagId = case2Str(str, 12, 16) // 不用高低位取反
 		const HWType = case2Str(str, 16, 17) // 软件信息
@@ -21,10 +23,11 @@ export function handMessage(arr: any): any {
 		// BIT0：红灯
 		// BIT1：绿灯
 		// BIT2：黄灯
-		const BellState = case2Str(str, 19, 20) // 0x00表示不蜂鸣,0x01表示蜂鸣
-		// console.log(tagId) // 0600002E
-		// const colorState = parseInt(LedState, 16).toString(2)// 字符串先转16进制，再转2进制
-		store.dispatch({ type: BASEMSG, value: { model: msgId[0] === "55" ? 1 : 0, baseCode, tagId, HWType, SWVersion, LedState: str.slice(18, 19)[0], BellState: BellState === '00' ? 0 : 1 } })
+		const BellState = Array.prototype.slice.call(arr.slice(19, 20))[0] // 0x00表示不蜂鸣,0x01表示蜂鸣  ,设备会上报09,出错
+		// if (msgId[0] === 85 && tagId === '06000034') {
+		// 	console.log(arr, BellState)
+		// }
+		store.dispatch({ type: BASEMSG, value: { msgId: msgId[0], baseCode, tagId, HWType, SWVersion, LedState: str.slice(18, 19)[0], BellState: BellState === 1 ? 1 : 0 } })
 	}
 	return null
 }
@@ -70,7 +73,7 @@ export function strTo32HexCharCode(num: number) {
 	const str = num.toString(16)
 	const str1 = new Array(8 - str.length + 1).join('0') + str
 	let hexCharCode: Array<any> = [];
-	for (var i = 0; i < str.length / 2; i++) {
+	for (var i = 0; i < str1.length / 2; i++) {
 		hexCharCode = [...hexCharCode, parseInt(str1.substr(2 * i, 2), 16)]
 	}
 	return hexCharCode.reverse();

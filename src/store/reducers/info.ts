@@ -3,7 +3,6 @@ export const MENUITEM = "info/MENUITEM"
 
 const initState: any = {
 	baseMsg: {
-		model: 0 // 0为正常塔灯；1为智能灯模式
 	},
 	menuItem: 'contal'
 }

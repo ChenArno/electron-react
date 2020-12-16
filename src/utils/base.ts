@@ -85,3 +85,7 @@ export function getLocalIP() {
 	}
 	return map
 }
+// 10进制转16进制，测试用
+export function num2hex16(arr: Array<number>) {
+	return arr.map(o => '0x' + o.toString(16))
+}
