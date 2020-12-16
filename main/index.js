@@ -2,8 +2,8 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
 
-const readSync = require('node-yaml').readSync
-const dirName = path.join(__dirname, './config/index.yaml')
+// const { readSync } = require('node-yaml')
+// const dirName = path.join(__dirname, './config/index.yaml')
 let mainWindow // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
 //判断命令行脚本的第二参数是否含--debug
 const development = /--development/.test(process.argv[2]);
@@ -36,10 +36,10 @@ function createWindow() {
 		}))
 	}
 
-	ipcMain.on('preload', async (event, msg) => {
-		const config = await readSync(dirName)
-		event.reply('preload-success', config)
-	})
+	// ipcMain.on('preload', async (event, msg) => {
+	// 	const config = await readSync(dirName)
+	// 	event.reply('preload-success', config)
+	// })
 
 	if (development) {
 		// 打开开发者工具，默认不打开

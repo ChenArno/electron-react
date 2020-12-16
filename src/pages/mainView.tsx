@@ -38,6 +38,15 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 		message.success('已下发')
 	}
 
+	// const beforeUpload = (file: any) => {
+	// 	const isLt2M = file.size / 1024 / 1024 < 81;
+	// 	if (!isLt2M) {
+	// 		message.error('files must smaller than 81MB!');
+	// 	}
+	// 	return isLt2M;
+	// }
+
+
 	return <Spin spinning={loading}>
 		<div className={styles.main}>
 			<Form initialValues={{ port: 2000 }} layout="inline"
@@ -65,13 +74,12 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 			<Space className={styles.exp}>
 				<Button type="default" onClick={() => changeModel(0x00)}>塔灯</Button>
 				<Button type="primary" onClick={() => changeModel(0x01)}>智能灯</Button>
-				<Button>导入标签</Button>
 			</Space>
 			<div style={{ marginTop: '20px' }}>
 				{menuItem === 'contal' ? <TemTable socket={socket} /> : <FerTable socket={socket} />}
 			</div>
 		</div>
-	</Spin>
+	</Spin >
 }
 
 export default connect(({ info }: any) => ({ baseMsg: info.baseMsg, menuItem: info.menuItem }), null, null, { forwardRef: true })(MainView)

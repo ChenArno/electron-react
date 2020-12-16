@@ -4,7 +4,10 @@ import { strToHexCharCode, strTo32HexCharCode } from '@/commons/handData'
 import Constants from '@/commons/constants'
 import { arrToSum } from '@/utils/base'
 import { connect } from 'react-redux'
-const { ipcRenderer } = window.require('electron')
+
+const { remote: { app } } = window.require('electron')
+const { readSync } = window.require('node-yaml')
+const { frequency } = readSync(app.getAppPath() + '/config/index.yaml')
 
 interface TemTableProps {
 	socket?: any;
@@ -15,7 +18,7 @@ const TemTable: React.FC<TemTableProps> = props => {
 	const { socket, baseMsg } = props
 	const [tableLoading] = useState(false)
 	const [dataSource, setDataSource] = useState([])
-	const [frequency, setFrequency] = useState([])
+	// const [frequency, setFrequency] = useState([])
 
 	const columns = [{
 		title: '控制盒ID',
@@ -57,15 +60,6 @@ const TemTable: React.FC<TemTableProps> = props => {
 			</>
 		)
 	}]
-
-	useEffect(() => {
-		ipcRenderer.send('preload', 'begin')
-		ipcRenderer.on('preload-success', (e: any, config: any) => {
-			// 监听主进程发来的事件...
-			const { frequency } = config
-			setFrequency(frequency)
-		})
-	}, [])
 
 	useEffect(() => {
 		const { tagId } = baseMsg

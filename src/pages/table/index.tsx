@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Divider, message, Form, Input, Button } from 'antd'
+import { Table, Divider, message, Form, Input, Button, Space } from 'antd'
 import { AlertOutlined, BellOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { strToHexCharCode, light2Bit, valueAtBit } from '@/commons/handData'
 import Constants from '@/commons/constants'
 import { arrToSum } from '@/utils/base'
 import { connect } from 'react-redux'
+import ImportBtn from '../compants/importBtn'
 import styles from './index.module.less'
 
 interface TemTableProps {
@@ -143,6 +144,10 @@ const TemTable: React.FC<TemTableProps> = props => {
 		if (dataSource.findIndex(o => o.id === id) > -1) return message.warning('标签已存在')
 		setDataSource(o => o = [...o, { id, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 }])
 	}
+	const getXlsx = (data: any) => {
+		console.log(data)
+		setDataSource(data.map((o: any) => ({ id: o, red: 0, yellow: 0, green: 0, SWVersion: '-', HWType: '-', BellState: 0 })))
+	}
 
 	return <div>
 		<Form initialValues={{ id: '06000034' }} layout="inline" style={{ marginBottom: '20px', marginTop: '10px' }} onFinish={onFinish}>
@@ -150,12 +155,15 @@ const TemTable: React.FC<TemTableProps> = props => {
 				<Input />
 			</Form.Item>
 			<Form.Item >
-				<Button
-					type="primary"
-					htmlType="submit"
-				>
-					提交
+				<Space>
+					<Button
+						type="primary"
+						htmlType="submit"
+					>
+						提交
           </Button>
+					<ImportBtn onClick={getXlsx} />
+				</Space>
 			</Form.Item>
 		</Form>
 		<Table loading={tableLoading} rowKey={columns => columns.id} size="small" dataSource={dataSource} columns={columns} pagination={false} />

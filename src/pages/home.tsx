@@ -95,7 +95,7 @@ const Home: React.FC<HomeProps> = (props) => {
     <Layout className={styles.lay}>
       <Header></Header>
       <Layout>
-        <Layout.Content>
+        <Layout.Content style={{ overflowY: 'auto' }}>
           <MainView socket={socket} loading={loading} onClick={onClick} status={status} clear={() => setTextArea('')} />
         </Layout.Content>
         <Layout.Sider width={sideWidth} className={styles.side}>
