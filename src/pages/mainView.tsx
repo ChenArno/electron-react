@@ -75,9 +75,7 @@ const MainView: React.FC<MainViewProps> = (props, ref: any) => {
 				<Button type="default" onClick={() => changeModel(0x00)}>塔灯</Button>
 				<Button type="primary" onClick={() => changeModel(0x01)}>智能灯</Button>
 			</Space>
-			<div style={{ marginTop: '20px' }}>
-				{menuItem === 'contal' ? <TemTable socket={socket} /> : <FerTable socket={socket} />}
-			</div>
+			{menuItem === 'contal' ? <TemTable socket={socket} /> : <FerTable socket={socket} />}
 		</div>
 	</Spin >
 }

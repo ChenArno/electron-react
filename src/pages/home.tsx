@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Layout, message } from 'antd';
 import styles from './index.module.less'
 import dayjs from 'dayjs'
@@ -19,10 +19,12 @@ let socket: any = null
 interface HomeProps { }
 const Home: React.FC<HomeProps> = (props) => {
 
-  // const childRef: any = useRef()
-  const [textArea, setTextArea] = useState<string>('')
+  const codeRef: any = useRef()
+  const [textArea, setTextArea] = useState<string>(``)
   const [status, setStatus] = useState(false)
   const [loading, setLoading] = useState(false)
+  // const [pause, setPause] = useState(false)
+  const pauseRef: any = useRef(false)
 
   const onClick = ({ ip, port }: any) => {
     if (!port || !ip) return message.warning('请先选择ip或者输入端口号');
@@ -47,7 +49,7 @@ const Home: React.FC<HomeProps> = (props) => {
         let res = buffer_to_hex(buf) + ""
         res = res.replace(/,/g, ' ')
         setTextArea((o: string) => {
-          o = `[${dayjs().format('HH:mm:ss')}] ${res}\n` + o
+          o += `[${dayjs().format('HH:mm:ss')}] ${res}\n`
           return o
         })
         handMessage(buf)
@@ -82,6 +84,7 @@ const Home: React.FC<HomeProps> = (props) => {
     server.on('listening', () => {
       setStatus(true)
       setLoading(false)
+      setTextArea('')
       message.success("server listening:" + server.address().address + ":" + server.address().port);
     });
     //服务器错误事件
@@ -91,6 +94,18 @@ const Home: React.FC<HomeProps> = (props) => {
     });
   }
 
+  const onChange = (instance: any) => {
+    // codeRef.current.editor
+    const { cm, height } = instance.doc
+    const { top } = cm.getScrollInfo()
+    cm.scrollTo(0, pauseRef.current ? top : height)
+  }
+  const onScroll = (instance: any) => {
+    // console.log(instance)
+    const { cm } = instance.doc
+    const { clientHeight, height, top } = cm.getScrollInfo()
+    pauseRef.current = (clientHeight + top) !== height
+  }
   return (
     <Layout className={styles.lay}>
       <Header></Header>
@@ -100,6 +115,7 @@ const Home: React.FC<HomeProps> = (props) => {
         </Layout.Content>
         <Layout.Sider width={sideWidth} className={styles.side}>
           <CodeMirror
+            ref={codeRef}
             value={textArea}
             width={sideWidth}
             options={{
@@ -108,8 +124,11 @@ const Home: React.FC<HomeProps> = (props) => {
               tabSize: 0,
               mode: 'jsx',
               lineWrapping: true,
-              cursorBlinkRate: -1
+              cursorBlinkRate: -1,
+              onKeyEvent: true, // 是否允许拖拽事件和键盘事件
             }}
+            onChange={onChange}
+            onScroll={onScroll}
           />
         </Layout.Sider>
       </Layout>
