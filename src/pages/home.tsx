@@ -119,7 +119,7 @@ const Home: React.FC<HomeProps> = (props) => {
             value={textArea}
             width={sideWidth}
             options={{
-              readOnly: false,
+              readOnly: true,
               keyMap: 'sublime',
               tabSize: 0,
               mode: 'jsx',
