@@ -4,6 +4,13 @@ const url = require('url')
 
 // const { readSync } = require('node-yaml')
 // const dirName = path.join(__dirname, './config/index.yaml')
+// const SerialPort = require('serialport')
+
+// SerialPort.list().then(
+// 	ports => ports.forEach(console.log),
+// 	err => console.error(err)
+// );
+
 let mainWindow // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
 //判断命令行脚本的第二参数是否含--debug
 const development = /--development/.test(process.argv[2]);
