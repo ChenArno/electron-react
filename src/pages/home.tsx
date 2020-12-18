@@ -96,15 +96,19 @@ const Home: React.FC<HomeProps> = (props) => {
 
   const onChange = (instance: any) => {
     // codeRef.current.editor
-    const { cm, height } = instance.doc
-    const { top } = cm.getScrollInfo()
-    cm.scrollTo(0, pauseRef.current ? top : height)
+    // const { cm } = instance.doc
+    const { top, height } = instance.getScrollInfo()
+    instance.scrollTo(0, pauseRef.current ? top : height)
   }
   const onScroll = (instance: any) => {
     // console.log(instance)
-    const { cm } = instance.doc
-    const { clientHeight, height, top } = cm.getScrollInfo()
-    pauseRef.current = (clientHeight + top) !== height
+    // const { cm } = instance.doc
+    const { clientHeight, height, top } = instance.getScrollInfo()
+    if ((clientHeight + top) === height) {
+      pauseRef.current = false
+    } else {
+      pauseRef.current = true
+    }
   }
   return (
     <Layout className={styles.lay}>
