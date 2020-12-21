@@ -16,7 +16,6 @@ import store from './store'
 import { Provider } from 'react-redux'
 import 'dayjs/locale/zh-cn'
 dayjs.locale('zh-cn')
-console.log(process.env)
 
 const render = (Component: any) => {
   ReactDOM.render(
