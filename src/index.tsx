@@ -8,7 +8,7 @@
  */
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import Home from '@/pages/home'
+import Routes from './routes'
 import { AppContainer } from 'react-hot-loader'
 import '@/assets/css/index.less'
 import dayjs from 'dayjs'
@@ -27,12 +27,10 @@ const render = (Component: any) => {
     document.getElementById('root')
   )
 }
-render(Home)
+render(Routes)
 if ((module as any).hot) {
-  ; (module as any).hot.accept('./pages/home', () => {
-    //因为在App里使用的是export default语法，这里使用的是require,默认不会加载default的，所以需要手动加上
-    const NextApp = require('./pages/home').default
+  ; (module as any).hot.accept('./routes', () => {
     // 重新渲染到 document 里面
-    render(NextApp)
+    render(Routes)
   })
 }

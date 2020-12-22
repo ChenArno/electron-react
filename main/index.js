@@ -11,9 +11,25 @@ const url = require('url')
 // 	err => console.error(err)
 // );
 
-let mainWindow // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
+let mainWindow, // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
+	caleDarWin;
 //判断命令行脚本的第二参数是否含--debug
 const development = /--development/.test(process.argv[2]);
+
+const winURL = development ? 'http://localhost:8000' : `file://${__dirname}/index.html`
+
+function openCalenWindow() {
+	caleDarWin = new BrowserWindow({
+		width: 400,
+		height: 600,
+		parent: mainWindow,
+		webPreferences: {
+			nodeIntegration: true
+		}
+	})
+	caleDarWin.loadURL(winURL + '#/config')
+	caleDarWin.on('closed', () => { caleDarWin = null; })
+}
 
 function createWindow() {
 	// 隐藏菜单栏
@@ -33,16 +49,21 @@ function createWindow() {
 
 	// 加载应用 打包
 	// console.log(development)
-	if (development) {
-		mainWindow.loadURL('http://localhost:8000')
-	} else {
-		mainWindow.loadURL(url.format({
-			pathname: path.join(__dirname, 'index.html'),
-			protocol: 'file:',
-			slashes: true
-		}))
-	}
-
+	// if (development) {
+	// 	mainWindow.loadURL('http://localhost:8000')
+	// } else {
+	// 	// const winURL = `file://${__dirname}/index.html`
+	// 	// file://${__dirname}/index.html#/config
+	// 	mainWindow.loadURL(url.format({
+	// 		pathname: path.join(__dirname, 'index.html'),
+	// 		protocol: 'file:',
+	// 		slashes: true
+	// 	}))
+	// }
+	mainWindow.loadURL(winURL)
+	ipcMain.on('openCale', (event) => {
+		openCalenWindow()
+	})
 	// ipcMain.on('preload', async (event, msg) => {
 	// 	const config = await readSync(dirName)
 	// 	event.reply('preload-success', config)

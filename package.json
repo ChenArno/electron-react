@@ -106,6 +106,7 @@
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "@types/react-redux": "^7.1.11",
+    "@types/react-router-dom": "^5.1.6",
     "@uiw/react-codemirror": "^3.0.1",
     "antd": "^4.9.2",
     "axios": "^0.21.0",
