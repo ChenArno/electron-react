@@ -36,7 +36,9 @@ function createWindow() {
 	Menu.setApplicationMenu(null)
 	mainWindow = new BrowserWindow({
 		width: 900,
-		height: 600,
+		height: 800,
+		minWidth: 900,
+		minHeight: 800,
 		frame: true,
 		webPreferences: {
 			javascript: true,

@@ -14,6 +14,7 @@ const BasicLayouts: React.FC<BasicLayoutsProps> = props => {
 				{children}
 			</Layout.Content>
 		</Layout>
+		<div>服务器连接状态</div>
 	</Layout>
 }
 
