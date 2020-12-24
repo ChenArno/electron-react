@@ -1,9 +1,15 @@
 import React from 'react'
 import { Tabs } from 'antd'
-import { Graphics, APSetting, APUpgrade, MACSetting, EDUpgrade } from './actions'
+import { APSetting, APUpgrade, MACSetting, EDUpgrade } from './actions'
 
 interface ActionViewProps {
 
+}
+const TabMenus: any = {
+	'ED升级': EDUpgrade,
+	'AP设置': APSetting,
+	'AP升级': APUpgrade,
+	'MAC设置': MACSetting
 }
 
 const ActionView: React.FC<ActionViewProps> = props => {
@@ -11,23 +17,18 @@ const ActionView: React.FC<ActionViewProps> = props => {
 	const callback = (val: any) => {
 		console.log(val)
 	}
+
+
 	return <div>
-		<Tabs defaultActiveKey="1" onChange={callback}>
-			<Tabs.TabPane tab="图形操作" key="1">
-				<Graphics />
-			</Tabs.TabPane>
-			<Tabs.TabPane tab="ED升级" key="2">
-				<EDUpgrade />
-			</Tabs.TabPane>
-			<Tabs.TabPane tab="AP设置" key="3">
-				<APSetting />
-			</Tabs.TabPane>
-			<Tabs.TabPane tab="AP升级" key="4">
-				<APUpgrade />
-			</Tabs.TabPane>
-			<Tabs.TabPane tab="MAC设置" key="5">
-				<MACSetting />
-			</Tabs.TabPane>
+		<Tabs defaultActiveKey="0" onChange={callback}>
+			{Object.keys(TabMenus).map((o: string, index: number) => {
+				const Com = TabMenus[o]
+				return (
+					<Tabs.TabPane tab={o} key={index}>
+						<Com />
+					</Tabs.TabPane>
+				)
+			})}
 		</Tabs>
 	</div>
 }
