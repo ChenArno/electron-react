@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const path = require('path')
-const url = require('url')
 
 // const { readSync } = require('node-yaml')
 // const dirName = path.join(__dirname, './config/index.yaml')

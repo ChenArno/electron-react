@@ -3,7 +3,7 @@ import { Tabs } from 'antd'
 import { APSetting, APUpgrade, MACSetting, EDUpgrade } from './actions'
 
 interface ActionViewProps {
-
+	socket?: any;
 }
 const TabMenus: any = {
 	'ED升级': EDUpgrade,
@@ -12,20 +12,17 @@ const TabMenus: any = {
 	'MAC设置': MACSetting
 }
 
+
 const ActionView: React.FC<ActionViewProps> = props => {
-
-	const callback = (val: any) => {
-		console.log(val)
-	}
-
+	const { socket } = props
 
 	return <div>
-		<Tabs defaultActiveKey="0" onChange={callback}>
+		<Tabs defaultActiveKey="0">
 			{Object.keys(TabMenus).map((o: string, index: number) => {
 				const Com = TabMenus[o]
 				return (
 					<Tabs.TabPane tab={o} key={index}>
-						<Com />
+						<Com socket={socket} />
 					</Tabs.TabPane>
 				)
 			})}

@@ -1,19 +1,19 @@
 import store from '@/store'
 import { BASEMSG } from '@/store/reducers/info'
-import Contants from './constants'
-import { buffer_to_hex } from '@/utils/base'
+import Constants from './constants'
+import { buffer_to_hex, arrToSum } from '@/utils/base'
 
 export function handMessage(arr: any): any {
 	const str = buffer_to_hex(arr)
 	const head = str.slice(0, 2)
 
-	if (head.toString() !== buffer_to_hex(Contants.cont_head).toString()) {
+	if (head.toString() !== buffer_to_hex(Constants.cont_head).toString()) {
 		return null
 	}
 	const msgId = Array.prototype.slice.call(arr.slice(8, 10))
-	if (JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_Tower)
-		|| JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_smart)
-		|| JSON.stringify(msgId) == JSON.stringify(Contants.cont_msgId_keys)
+	if (JSON.stringify(msgId) == JSON.stringify(Constants.cont_msgId_Tower)
+		|| JSON.stringify(msgId) == JSON.stringify(Constants.cont_msgId_smart)
+		|| JSON.stringify(msgId) == JSON.stringify(Constants.cont_msgId_keys)
 	) { // 塔灯的状态上报及需求同步
 		const baseCode = arr.slice(4, 8)
 		const tagId = case2Str(str, 12, 16) // 不用高低位取反
@@ -86,4 +86,20 @@ export function light2Bit(val: any, status: any) {
 	Object.keys(coll).filter(o => o === 'yellow' || o === 'red' || o === 'green').forEach(o => v += coll[o] + '')
 	// console.log(v)
 	return [parseInt(v, 2)] // 2进制转10进制
+}
+/**
+ * @param bodyMsg 消息体
+ * @param msgId 消息id
+ * **/
+export function getCodeBody(bodyMsg: any, msgId: any) {
+	let sendMsg = [
+		...Constants.cont_head,
+		...Constants.cont_reserved,
+		...[0xFF, 0xFF, 0xFF, 0xFF],
+		...msgId,
+		...[bodyMsg.length, 0x00],
+		...bodyMsg
+	]
+	sendMsg = [...sendMsg, ...strToHexCharCode(arrToSum(sendMsg))]
+	return sendMsg
 }

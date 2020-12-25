@@ -12,6 +12,10 @@ export function buffer_to_hex(__buffer: any) {
 		return str
 	})
 }
+// buffer转字符串
+export function buffer_to_str(__buffer: any) {
+	return (buffer_to_hex(__buffer) + '').replace(/,/g, '').toUpperCase()
+}
 // 16进制转buffer
 export function hex_to_buffer(__array: Array<string>) {
 	const hex_array: any = __array.map(el => parseInt(el, 16))

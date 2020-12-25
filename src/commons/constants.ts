@@ -8,6 +8,8 @@ class Constants {
 	static AP_Config_BeaconMode = [0x08, 0x80] // 修改TD的上报模式
 	static AP_Config_RfBase = [0x06, 0x80] // 修改基站频率
 	static ED_Config_RfBase = [0x05, 0x80]// 修改标签频率
+
+	static AP_Factory_Config_MAC = [0x03, 0x80]// 配置AP的MAC地址
 }
 
 export default Constants

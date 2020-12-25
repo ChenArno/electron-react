@@ -2,7 +2,7 @@ import React from 'react'
 import { Space, Button, Row, Col, Input, Form, Select, InputNumber } from 'antd'
 
 interface EDUpgradeProps {
-
+	socket?: any;
 }
 
 const modeLists: Array<number> = [0, 1]
