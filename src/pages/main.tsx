@@ -50,6 +50,11 @@ const Main: React.FC<MainProps> = props => {
 		socket.connect(port, ip, () => {
 			message.success('连接成功');
 		})
+		socket.setTimeout(30 * 1000);
+		socket.on('timeout', () => {
+			message.warning('socket 超时');
+			socket.end();
+		});
 		//接收到数据
 		socket.on('data', (buf: any) => {
 			let res = buffer_to_hex(buf) + ""
@@ -80,7 +85,7 @@ const Main: React.FC<MainProps> = props => {
 	}
 
 	return <BasicLayouts socket={socket} onConnect={onFinish} onClose={onClose} onClear={onClear}>
-		<SendMsg />
+		<SendMsg socket={socket} />
 		<Row style={{ height: 'calc(100% - 168px)' }}>
 			<ReceiveRecord textArea={sendmsg} title='发送记录' />
 			<ReceiveRecord textArea={receiveMsg} title='接收记录' />

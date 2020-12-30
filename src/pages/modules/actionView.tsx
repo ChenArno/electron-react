@@ -1,12 +1,12 @@
 import React from 'react'
 import { Tabs } from 'antd'
-import { APSetting, APUpgrade, MACSetting, EDUpgrade } from './actions'
+import { APSetting, APUpgrade, MACSetting } from './actions'
 
 interface ActionViewProps {
 	socket?: any;
 }
 const TabMenus: any = {
-	'ED升级': EDUpgrade,
+	// 'ED升级': EDUpgrade,
 	'AP设置': APSetting,
 	'AP升级': APUpgrade,
 	'MAC设置': MACSetting

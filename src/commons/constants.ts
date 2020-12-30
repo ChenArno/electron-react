@@ -13,6 +13,8 @@ class Constants {
 	static AP_Factory_Config_MAC = [0x03, 0x80]// 配置AP的MAC地址
 	static AP_SwUpdate_Init_Req = [0x01, 0x80] // Server发送Req给AP
 	static AP_SwUpdate_CodeData_Req = [0x02, 0x80] // AP发送Req给Server，申请一段代码数据（CodeData），Server给出Resp。
+
+	static AP_Factory_Config_IP_Req = [0x00, 0x80] // ap设置参数
 }
 
 export default Constants
