@@ -93,3 +93,8 @@ export function getLocalIP() {
 export function num2hex16(arr: Array<number>) {
 	return arr.map(o => '0x' + o.toString(16))
 }
+// 数组转10进制
+export function arr2Int(code: any) {
+	const num = (buffer_to_hex(code.reverse()) + '').replace(/,/g, "")
+	return hex2int(num)
+}
