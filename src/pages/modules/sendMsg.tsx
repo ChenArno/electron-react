@@ -17,6 +17,7 @@ const SendMsg: React.FC<SendMsgProps> = props => {
 
 	const onFinish = ({ textArea }: any) => {
 		if (!socket) return message.info('请先连接')
+		if (!textArea) return message.info('请先填入数据')
 		const send = buffer_to_str(strToHexCharCode(textArea.replace(/ /g, '')))
 		store.dispatch({ type: SENDCODE, value: send })
 		socket.write(Buffer.from(textArea))
