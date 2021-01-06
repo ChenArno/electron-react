@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Space, Button, Row, Col, Input, Form, InputNumber, Upload, message } from 'antd'
-import { buffer_to_hex, buffer_to_str, arr2Int } from '@/utils/base'
+import { buffer_to_hex, buffer_to_str, arr2Int, int2Arr } from '@/utils/base'
 import Constants from '@/commons/constants'
-import { strTo32HexCharCode, strToHexCharCode, getCodeBody } from '@/commons/handData'
+import { strTo32HexCharCode, getCodeBody } from '@/commons/handData'
 import { connect } from 'react-redux'
 import { SENDCODE } from '@/store/reducers/info'
 import store from '@/store'
@@ -67,8 +67,8 @@ const APUpgrade: React.FC<APUpgradeProps> = props => {
 		const crc16 = strTo32HexCharCode(form.getFieldValue('CRC16'))
 		const HWType = parseInt(form.getFieldValue('HWType'))
 		const HWVersion = parseInt(form.getFieldValue('HWVersion'))
-		let SWVersion: any = strToHexCharCode(new Array(4 - form.getFieldValue('SWVersion').length + 1).join('0') + form.getFieldValue('SWVersion'))
-		const arr = [...len, ...crc16, HWType, HWVersion, ...SWVersion.reverse(), 0x00, 0x00, 0x00, 0x00]
+		const SWVersion: any = int2Arr(parseInt(form.getFieldValue('SWVersion')))
+		const arr = [...len, ...crc16, HWType, HWVersion, ...SWVersion, 0x00, 0x00, 0x00, 0x00]
 		const sendMsg = getCodeBody(arr, Constants.AP_SwUpdate_Init_Req)
 		const send = buffer_to_str(sendMsg)
 		store.dispatch({ type: SENDCODE, value: send })

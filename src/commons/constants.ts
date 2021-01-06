@@ -15,6 +15,7 @@ class Constants {
 	static AP_SwUpdate_CodeData_Req = [0x02, 0x80] // AP发送Req给Server，申请一段代码数据（CodeData），Server给出Resp。
 
 	static AP_Factory_Config_IP_Req = [0x00, 0x80] // ap设置参数
+	static AP_Reset_Req = [0x06, 0x00] //重启
 }
 
 export default Constants
