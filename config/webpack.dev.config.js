@@ -15,6 +15,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const { description } = require('../package.json')
 const PORT = 8000
 
 const webpackDevConfig = merge(common, {
@@ -38,6 +39,7 @@ const webpackDevConfig = merge(common, {
     new HtmlWebpackPlugin({
       template: 'public/index.html',
       inject: 'body',
+      title: description,
       hash: false
     }),
     new webpack.HotModuleReplacementPlugin()

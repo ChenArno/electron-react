@@ -23,6 +23,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 // gzip压缩
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
+const { description } = require('../package.json')
 
 const webpackProdConfig = merge(common, {
   mode: 'production',
@@ -42,7 +43,7 @@ const webpackProdConfig = merge(common, {
         collapseWhitespace: true, // 删除空白符与换行符
         minifyCSS: true // 压缩内联css
       },
-      title: 'Hello wrt-cli'
+      title: description,
     }),
     // copy custom static assets
     new CopyWebpackPlugin([

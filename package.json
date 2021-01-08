@@ -1,12 +1,12 @@
 {
-  "name": "eslconfig",
+  "name": "electron-react-temp",
   "version": "1.0.0",
-  "description": "打包",
+  "description": "模板",
   "main": "index.js",
   "homepage": ".",
   "build": {
-    "productName": "esl-tool",
-    "appId": "org.afd-esl-tool.electron",
+    "productName": "electron-template",
+    "appId": "org.afd-react-template.electron",
     "copyright": "Copyright © afd",
     "asar": false,
     "directories": {
@@ -27,7 +27,7 @@
     },
     "nsis": {
       "oneClick": false,
-      "guid": "esl-tool",
+      "guid": "electron-template",
       "perMachine": true,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -46,7 +46,7 @@
     "start": "electron main/index.js --development",
     "analyz": "npm_config_report=true npm run build",
     "postinstall": "electron-builder install-app-deps",
-    "distWin": "yarn run build && electron-builder --win --x64",
+    "distWin": "yarn run build && electron-builder --win --x64 && yarn run zip",
     "zip": "node config/package.js",
     "pack": "electron-packager ./build serport --platform=win32 --arch=x64 --out=./dist --app-version=1.0.1 --electron-version=9.0.0"
   },
